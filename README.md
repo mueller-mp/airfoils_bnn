@@ -12,7 +12,7 @@ In order to perform a loop over all three model types (flipout, dropout and non-
 The above code snippet will train a non bayesian network, two flipout BNNs with Kl-prefactors 100 and 1000 and two dropout BNNs with dropout rates 0.01 and 0.05.
 
 ### Results
-The results, consisting of loss plots and examples showing repeated samples and the corresponding uncerainty distribution, will be stored in a folder named *runs/*.
+The results, consisting of loss plots and examples showing repeated samples and the corresponding uncertainty distribution, will be stored in a folder named *runs/*.
 
 ### Requirements
 The networks were trained successfully on the servus gpu machines with the following specifications:
