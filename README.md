@@ -5,14 +5,14 @@ By executing the __train_functional.py__ file the BNNs can be trained and evalua
 
 ```python3 train_functional.py --datadir=../data/train/ --epochs=25```
 
-In order to perform a loop over all three model types (flipout, dropout and non-bayesian networks), the helper file __train_master.py__ can be used:
+In order to perform a loop over all three model types (flipout, dropout and non-bayesian networks), the helper file __train_loop.py__ can be used:
 
 ```python3 train_master.py --dropouts=0.01,0.05 --flipouts=100,1000```
 
-The above code snippet will train a non bayesian network, two flipout BNNs with Kl-prefactors 100 and 1000 and two dropout BNNs with dropout rates 0.01 and 0.05.
+The above code snippet will train a non bayesian network, two flipout BNNs with Kl-prefactors 100 and 1000 and two dropout BNNs with dropout rates 0.01 and 0.05. 
 
 ### Results
-The results, consisting of loss plots and examples showing repeated samples and the corresponding uncertainty distribution, will be stored in a folder named *runs/*.
+The results, consisting of loss plots and examples showing repeated samples and the corresponding uncertainty distribution, will be stored in a folder named *runs/*. Numerical results, like loss values, standard deviations etc. are additionally stored in a pickled dataframe, if the __train_loop.py__ file is executed.
 
 ### Requirements
 The networks were trained successfully on the servus gpu machines with the following specifications:
