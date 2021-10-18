@@ -1,5 +1,5 @@
 '''
-script to execute the training_functional.py file several times with different parameters
+script to execute the train.py file several times with different parameters
 '''
 import click
 import subprocess
