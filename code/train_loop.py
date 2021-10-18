@@ -53,7 +53,7 @@ def main(datadir,
             "kl_pref={}".format(1.)
         ]
         flags = " ".join(map(lambda x: "--{}".format(x), flags))
-        command = "python train_functional.py {}".format(flags)
+        command = "python train.py {}".format(flags)
         print(command)
         subprocess.call(command, shell=True)
 
@@ -66,7 +66,7 @@ def main(datadir,
                 "kl_pref={}".format(kl_pref)
             ]
             flags = " ".join(map(lambda x: "--{}".format(x), flags))
-            command = "python train_functional.py {}".format(flags)
+            command = "python train.py {}".format(flags)
             print(command)
             subprocess.call(command, shell=True)
 
@@ -81,7 +81,7 @@ def main(datadir,
                     "spatial_dropout={}".format(spatial_dropout),
                 ]
                 flags = " ".join(map(lambda x: "--{}".format(x), flags))
-                command = "python train_functional.py {}".format(flags)
+                command = "python train.py {}".format(flags)
                 print(command)
                 subprocess.call(command, shell=True)
 
