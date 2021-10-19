@@ -1,2 +1,5 @@
-# not all runs
-runs/
+# ignore all runs but grid6, otherwise repo becomes too big
+runs/*
+!runs/grid6/
+# no notebook checkpoints
+code/.ipynb_checkpoints/
