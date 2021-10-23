@@ -128,6 +128,7 @@ def main(datadir,
     mae_losses = []
     total_losses = []
     val_maes = []
+    val_stds = []
     idxs = np.array(range(len(X_train)))
     np.random.shuffle(idxs)
     idxs = np.resize(idxs,(int(len(X_train)/batch_size)+1,batch_size))
@@ -148,7 +149,7 @@ def main(datadir,
         for batch_idxs in idxs:
             # forward pass and loss computation
             with tf.GradientTape() as tape:
-        #        inputs, targets = traindata
+                # inputs, targets = traindata
                 inputs, targets = X_train[batch_idxs,...], y_train[batch_idxs,...]
                 prediction = model(inputs, training=True)
                 loss_mae = tf.reduce_mean(mae(prediction, targets))
@@ -207,6 +208,7 @@ def main(datadir,
     axs[2].set_title('Total Train Loss')
     axs[2].legend()
     plt.savefig(savedir+'Loss',bbox_inches='tight')
+
     # validation
     reps=20
     preds=np.zeros(shape=(reps,)+X_val.shape)
@@ -215,11 +217,13 @@ def main(datadir,
     preds_mean=np.mean(preds,axis=0)
     preds_std=np.std(preds,axis=0)
 
+    mae_mean = tf.reduce_mean(mae(preds_mean,y_val))
+    val_std_mean = tf.reduce_mean(preds_std)
 
     # store summary statistics in df and append to old df if exists
     df=pd.DataFrame({'model_type':[model_type],'epochs':[epochs], 'early_stopping_epoch':[epoch], 'batch_size':[batch_size],'lrG':[lrg],'flipout':[flipout], 'kl_pref':[kl_pref],
                      'dropout':[dropout], 'spatial_dropout':[spatial_dropout], 'val_mae':[val_maes[-1]],'train_mae':[mae_losses[-1]], 'train_loss':[total_losses[-1]],
-                     'train_losses_total':[total_losses], 'train_losses_mae':[mae_losses], 'val_losses_total':[val_maes]})
+                     'train_losses_total':[total_losses], 'train_losses_mae':[mae_losses], 'val_losses_total':[val_maes], 'val_mae_mean':[mae_mean], 'val_std_mean':[val_std_mean]})
 
     if os.path.isfile("../runs/"+folder+"df_summary.pkl"):
         df_old = pd.read_pickle("../runs/"+folder+"df_summary.pkl")
