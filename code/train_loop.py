@@ -5,7 +5,7 @@ import click
 import subprocess
 
 @click.command()
-@click.option("--datadir", default="../data/train/")
+@click.option("--datadir", default="../data/")
 @click.option("--model_types", default='bayesian-unet,bayesian-mars-moon', help='bayesian-mars-moon or bayesian-unet')
 @click.option("--batch_size", default=64, type=click.INT)
 @click.option("--lrg", default=0.005, type=click.FLOAT)

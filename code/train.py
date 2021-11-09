@@ -18,7 +18,7 @@ import pandas as pd
 
 # parameters obtained from commandline
 @click.command()
-@click.option("--datadir", default="../data/train/")
+@click.option("--datadir", default="../data/")
 @click.option("--model_type", default='bayesian-unet', help='bayesian-mars-moon or bayesian-unet')
 @click.option("--batch_size", default=64, type=click.INT)
 @click.option("--lrg", default=0.005, type=click.FLOAT)
@@ -63,8 +63,8 @@ def main(datadir,
         np.random.seed(seed)
         tf.random.set_seed(seed)
 
-    # load data
-    files = listdir(datadir)
+    # load train and val data
+    files = listdir(datadir+'train/')
     random.shuffle(files,)
     frac_train_test = 0.9
     split_idx = int(len(files)*frac_train_test)
@@ -79,13 +79,13 @@ def main(datadir,
 
 
     for i, file in enumerate(train_files):
-        npfile = np.load(datadir + file)
+        npfile = np.load(datadir + 'train/' + file)
         d = npfile['a']
         X_train[i] = d[0:3]
         y_train[i] = d[3:6]
 
     for i, file in enumerate(val_files):
-        npfile = np.load(datadir + file)
+        npfile = np.load(datadir + 'train/' + file)
         d = npfile['a']
         X_val[i] = d[0:3]
         y_val[i] = d[3:6]
@@ -100,6 +100,30 @@ def main(datadir,
 
     dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train)).shuffle(len(X_train),
         seed=46168531, reshuffle_each_iteration=False).batch(batch_size, drop_remainder=False)
+
+    # load test data
+    test_files = listdir(datadir + 'test/')
+    random.shuffle(files_test, )
+
+    X_test = np.empty((len(test_files), 3, 128, 128))
+    y_test = np.empty((len(test_files), 3, 128, 128))
+
+    for i, file in enumerate(test_files):
+        npfile = np.load(datadir + 'test/' + file)
+        d = npfile['a']
+        X_test[i] = d[0:3]
+        y_test[i] = d[3:6]
+
+    # move axis to channels_last for convenience
+    X_test = np.moveaxis(X_test, 1, -1)
+    y_test = np.moveaxis(y_test, 1, -1)
+
+    print("Number of test data loaded:", len(X_test))
+
+    dataset_test = tf.data.Dataset.from_tensor_slices((X_test, y_test)).shuffle(len(X_test),
+                                                                             seed=46168531,
+                                                                             reshuffle_each_iteration=False).batch(
+        batch_size, drop_remainder=False)
 
     def computeLR(i, epochs, minLR, maxLR):
       if i < epochs * 0.5:
@@ -188,7 +212,7 @@ def main(datadir,
 
         # early stopping if no improvement is made on validation error for 3 consecutive epochs
         if epoch>=4:
-            if all([i>val_maes[-4] for i in val_maes[-3:]]):
+            if not any([i<val_maes[-4] for i in val_maes[-3:]]):
                 stop = True
 
     if save_model:
@@ -209,21 +233,21 @@ def main(datadir,
     axs[2].legend()
     plt.savefig(savedir+'Loss',bbox_inches='tight')
 
-    # validation
+    # test
     reps=20
-    preds=np.zeros(shape=(reps,)+X_val.shape)
+    preds=np.zeros(shape=(reps,)+X_test.shape)
     for rep in range(reps):
-        preds[rep,:,:,:,:]=model(X_val,training=val_training)
+        preds[rep,:,:,:,:]=model(X_test,training=val_training)
     preds_mean=np.mean(preds,axis=0)
     preds_std=np.std(preds,axis=0)
 
-    mae_mean = tf.reduce_mean(mae(preds_mean,y_val))
-    val_std_mean = tf.reduce_mean(preds_std)
+    test_mae_mean = tf.reduce_mean(mae(preds_mean,y_test))
+    test_std_mean = tf.reduce_mean(preds_std)
 
     # store summary statistics in df and append to old df if exists
     df=pd.DataFrame({'model_type':[model_type],'epochs':[epochs], 'early_stopping_epoch':[epoch], 'batch_size':[batch_size],'lrG':[lrg],'flipout':[flipout], 'kl_pref':[kl_pref],
                      'dropout':[dropout], 'spatial_dropout':[spatial_dropout], 'val_mae':[val_maes[-1]],'train_mae':[mae_losses[-1]], 'train_loss':[total_losses[-1]],
-                     'train_losses_total':[total_losses], 'train_losses_mae':[mae_losses], 'val_losses_total':[val_maes], 'val_mae_mean':[mae_mean], 'val_std_mean':[val_std_mean]})
+                     'train_losses_total':[total_losses], 'train_losses_mae':[mae_losses], 'val_losses_total':[val_maes], 'test_mae_mean':[test_mae_mean], 'test_std_mean':[test_std_mean]})
 
     if os.path.isfile("../runs/"+folder+"df_summary.pkl"):
         df_old = pd.read_pickle("../runs/"+folder+"df_summary.pkl")
@@ -252,15 +276,15 @@ def main(datadir,
         axs[i].set_title(label)
 
     obs_idx=5
-    plot_BNN_predictions(y_val[obs_idx,...],preds[:,obs_idx,:,:,:],preds_mean[obs_idx,...],preds_std[obs_idx,...])
+    plot_BNN_predictions(y_test[obs_idx,...],preds[:,obs_idx,:,:,:],preds_mean[obs_idx,...],preds_std[obs_idx,...])
     plt.savefig(savedir + 'Sample_idx_{}.png'.format(obs_idx), bbox_inches='tight')
 
     obs_idx=15
-    plot_BNN_predictions(y_val[obs_idx,...],preds[:,obs_idx,:,:,:],preds_mean[obs_idx,...],preds_std[obs_idx,...])
+    plot_BNN_predictions(y_test[obs_idx,...],preds[:,obs_idx,:,:,:],preds_mean[obs_idx,...],preds_std[obs_idx,...])
     plt.savefig(savedir + 'Sample_idx_{}.png'.format(obs_idx), bbox_inches='tight')
 
     obs_idx=25
-    plot_BNN_predictions(y_val[obs_idx,...],preds[:,obs_idx,:,:,:],preds_mean[obs_idx,...],preds_std[obs_idx,...])
+    plot_BNN_predictions(y_test[obs_idx,...],preds[:,obs_idx,:,:,:],preds_mean[obs_idx,...],preds_std[obs_idx,...])
     plt.savefig(savedir + 'Sample_idx_{}.png'.format(obs_idx), bbox_inches='tight')
 
 
@@ -268,13 +292,28 @@ def main(datadir,
     CHANNEL = 0
     fig, axs = plt.subplots(nrows=len(IDXS),ncols=3,sharex=True, sharey = True, figsize = (9,len(IDXS)*3))
     for i, idx in enumerate(IDXS):
-      axs[i][0].imshow(np.flipud(X_val[idx,:,:,CHANNEL].transpose()), cmap=cm.magma)
+      axs[i][0].imshow(np.flipud(X_test[idx,:,:,CHANNEL].transpose()), cmap=cm.magma)
       axs[i][1].imshow(np.flipud(preds_mean[idx,:,:,CHANNEL].transpose()), cmap=cm.magma)
       axs[i][2].imshow(np.flipud(preds_std[idx,:,:,CHANNEL].transpose()), cmap=cm.viridis)
     axs[0][0].set_title('Shape')
     axs[0][1].set_title('Avg Pred')
     axs[0][2].set_title('Std. Dev')
     plt.savefig(savedir+'different_shapes.png', bbox_inches='tight')
+
+    IDXS = [1,3,8]
+    CHANNEL = 0
+    fig, axs = plt.subplots(nrows=len(IDXS),ncols=4,sharex=True, sharey = True, figsize = (12,len(IDXS)*3))
+    for i, idx in enumerate(IDXS):
+      axs[i][0].imshow(np.flipud(X_test[idx,:,:,CHANNEL].transpose()), cmap=cm.magma)
+      axs[i][1].imshow(np.flipud(preds_mean[idx,:,:,CHANNEL].transpose()), cmap=cm.magma)
+      axs[i][2].imshow(np.flipud(preds_std[idx,:,:,CHANNEL].transpose()), cmap=cm.viridis)
+      axs[i][3].imshow(np.flipud(y_test[idx,:,:,CHANNEL].transpose()), cmap=cm.magma)
+
+    axs[0][0].set_title('Shape')
+    axs[0][1].set_title('Avg Pred')
+    axs[0][2].set_title('Std. Dev')
+    axs[0][3].set_title('Target')
+    plt.savefig(savedir+'different_shapes_w_target.png', bbox_inches='tight')
 
 if __name__ == "__main__":
     main()
