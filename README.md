@@ -21,15 +21,11 @@ Loss plots and examples showing repeated samples and the corresponding uncertain
 
 ##### Spatial Dropout vs. normal Dropout
 Comparing spatial dropout to normal dropout, one finds that there is a qualitative difference between the two: Spatial dropout smoothes out the smaller variations that are visible in the regular dropout scheme. This is also visible in the resulting uncertainty (note that the uncertainty plots show normalized uncertainty, i.e. it it not possible to compare the magnitudes by colorscheme, but only the distribution across the image).
-![alt text](https://github.com/muellerm-95/airfoils_bnn/blob/1b0d919ee03c95e18c320b16ef619b0143abbec6/runs/grid6/spatial_do_True_example.png)
-![alt text](https://github.com/muellerm-95/airfoils_bnn/blob/1b0d919ee03c95e18c320b16ef619b0143abbec6/runs/grid6/spatial_do_False_example.png)
+![alt text](https://github.com/muellerm-95/airfoils_bnn/blob/main/figs/spatial0.05_vs_normal0.05.png)
 
-##### New Shapes - Flipout 
- <img src="https://github.com/muellerm-95/airfoils_bnn/blob/1b0d919ee03c95e18c320b16ef619b0143abbec6/runs/grid6/bayesian-unet_bsize_64_lrG_0.005_epochs_40_klpref_100.0_spatialDropout_True_dropout_0.0_flipout_True/different_shapes.png" width="400" height="400">
- 
-##### New Shapes - Dropout 
+##### New Shapes
 
-<img src="https://github.com/muellerm-95/airfoils_bnn/blob/1b0d919ee03c95e18c320b16ef619b0143abbec6/runs/grid6/bayesian-unet_bsize_64_lrG_0.005_epochs_40_klpref_1.0_spatialDropout_True_dropout_0.1_flipout_False/different_shapes.png" width="400" height="400">
+<img src="https://github.com/muellerm-95/airfoils_bnn/blob/main/figs/spatial0.05_vs_normal0.05.png" width="400" height="400">
 
 ### Requirements
 The networks were trained successfully on the servus gpu machines with the following specifications:
