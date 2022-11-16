@@ -1,5 +1,8 @@
 # airfoils_bnn
 This repository contains code that allows to train Bayesian Neural Networks to predict the Reynolds-averaged Navier-Stokes (short: RANS) flows around airfoils. Two versions of BNNs are implemented: Flipout-BNNs, leveraging tensorflow-probability and dropout BNNs. 
+### Data
+Please refer to https://github.com/thunil/Deep-Flow-Prediction on how to get the data.
+
 ### Training
 By executing the __train.py__ file the BNNs can be trained and evaluated. In order to specify parts of the training, parameters (like e.g. the number of epochs, or the location of the data) can be passed via click arguments:
 
