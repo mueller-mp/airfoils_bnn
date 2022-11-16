@@ -1,5 +1,5 @@
 # airfoils_bnn
-This repository contains code that allows to train Bayesian Neural Networks to predict the Reynolds-averaged Navier-Stokes (short: RANS) flows around airfoils. Two versions of BNNs are implemented: Flipout-BNNs, leveraging tensorflow-probability and dropout BNNs. 
+This repository contains code that allows to train Bayesian Neural Networks to predict the Reynolds-averaged Navier-Stokes (short: RANS) flows around airfoils, like it was done in the first experiment in https://arxiv.org/abs/2205.01222. Two versions of BNNs are implemented: Flipout-BNNs, leveraging tensorflow-probability and dropout BNNs. 
 ### Data
 Please refer to https://github.com/thunil/Deep-Flow-Prediction on how to get the data.
 
