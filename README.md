@@ -8,7 +8,7 @@ By executing the __train.py__ file the BNNs can be trained and evaluated. In ord
 
 ```python3 train.py --datadir=../data/train/ --epochs=25```
 
-In order to perform a loop over all three model types (flipout, dropout and non-bayesian networks), the helper file __train_loop.py__ can be used:
+In order to perform a loop over dropout rates and model types (dropout and non-bayesian networks, flipout is commented out at the moment), the helper file __train_loop.py__ can be used:
 
 ```python3 train_loop.py --dropouts=0.01,0.05 --flipouts=100,1000```
 
