@@ -24,8 +24,7 @@ Comparing spatial dropout to normal dropout, one finds that there is a qualitati
 ![alt text](https://github.com/muellerm-95/airfoils_bnn/blob/main/figs/spatial0.05_vs_normal0.05.png)
 
 ##### New Shapes
-
-<img src="https://github.com/muellerm-95/airfoils_bnn/blob/main/figs/different_shapes_w_target_tight_spatialdo_001_test_annotated.pdf" width="400" height="800">
+<img src="figs/different_shapes_w_target_tight_spatialdo_001_test_annotated.png" width="400" height="600">
 
 ### Requirements
 The networks were trained successfully on the servus gpu machines with the following specifications:
