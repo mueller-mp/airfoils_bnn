@@ -6,16 +6,16 @@ Please refer to https://github.com/thunil/Deep-Flow-Prediction on how to get the
 ### Training
 By executing the __train.py__ file the BNNs can be trained and evaluated. In order to specify parts of the training, parameters (like e.g. the number of epochs, or the location of the data) can be passed via click arguments:
 
-```python3 train_functional.py --datadir=../data/train/ --epochs=25```
+```python3 train.py --datadir=../data/train/ --epochs=25```
 
 In order to perform a loop over all three model types (flipout, dropout and non-bayesian networks), the helper file __train_loop.py__ can be used:
 
-```python3 train_master.py --dropouts=0.01,0.05 --flipouts=100,1000```
+```python3 train_loop.py --dropouts=0.01,0.05 --flipouts=100,1000```
 
-The above code snippet will train a non bayesian network, two flipout BNNs with Kl-prefactors 100 and 1000 and two dropout BNNs with dropout rates 0.01 and 0.05. 
+The above code snippet will train a non bayesian network and two dropout BNNs with dropout rates 0.01 and 0.05. 
 
 ### Evaluation
-Loss plots and examples showing repeated samples and the corresponding uncertainty distribution, are stored in a folder named *runs/*. Numerical results, like loss values, standard deviations etc. are additionally stored in a pickled dataframe, if the __train_loop.py__ file is executed. The script __Evaluation.ipynb__ contains code for preliminary analysis of this dataframe.
+Loss plots and examples showing repeated samples and the corresponding uncertainty distribution, are stored in a folder named *runs/*. Numerical results, like loss values, standard deviations etc. are additionally stored in a pickled dataframe, if the __train_loop.py__ file is executed. 
 
 ### Some Preliminary Results
 
@@ -30,10 +30,6 @@ Comparing spatial dropout to normal dropout, one finds that there is a qualitati
 ##### New Shapes - Dropout 
 
 <img src="https://github.com/muellerm-95/airfoils_bnn/blob/1b0d919ee03c95e18c320b16ef619b0143abbec6/runs/grid6/bayesian-unet_bsize_64_lrG_0.005_epochs_40_klpref_1.0_spatialDropout_True_dropout_0.1_flipout_False/different_shapes.png" width="400" height="400">
-
-##### Artefacts
-mars-moon model comes with weird artefacts, could not be trained well:
-![alt text](https://github.com/muellerm-95/airfoils_bnn/blob/1b0d919ee03c95e18c320b16ef619b0143abbec6/runs/grid6/weird_mars_moon.png)
 
 ### Requirements
 The networks were trained successfully on the servus gpu machines with the following specifications:
